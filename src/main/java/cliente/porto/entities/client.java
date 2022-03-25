@@ -1,9 +1,8 @@
-package entities;
+package cliente.porto.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +17,9 @@ public class client {
     private Categoria categoria;
     private Status status;
 
+    @OneToMany(mappedBy = "client")
+    private final List<Movimentação> Mover = new ArrayList<>();
+
     public client() {
     }
 
@@ -28,6 +30,10 @@ public class client {
         this.tip = tip;
         this.categoria = categoria;
         this.status = status;
+    }
+
+    public List<Movimentação> getMover() {
+        return Mover;
     }
 
     public Long getId() {

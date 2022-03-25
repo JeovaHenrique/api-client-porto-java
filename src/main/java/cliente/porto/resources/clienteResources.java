@@ -1,24 +1,34 @@
 package cliente.porto.resources;
 
-import entities.Status;
-import entities.client;
+import cliente.porto.entities.client;
 
+import cliente.porto.services.ClientServices;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static entities.Categoria.IMPORTACAO;
-import static entities.Status.CHEIO;
+import java.util.List;
+
+import static cliente.porto.entities.Categoria.IMPORTACAO;
+import static cliente.porto.entities.Status.CHEIO;
 
 @RestController
 @RequestMapping("/cliente")
 public class clienteResources {
 
+    @Autowired
+    private ClientServices services;
+
     @GetMapping
-    public ResponseEntity<client> findAll() {
-        client c1 = new client(1l, "maria", "TEST1234567", 20, IMPORTACAO, CHEIO);
-        return ResponseEntity.ok().body(c1);
+    public ResponseEntity<List<client>> findAll() {
+        List<client> list =services.findAll();
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<client> findById(@PathVariable Long id) {
+        client obj =  services.findById(id);
+        return ResponseEntity.ok().body(obj);
     }
 
 }
