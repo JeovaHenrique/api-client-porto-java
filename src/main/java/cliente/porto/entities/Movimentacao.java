@@ -1,28 +1,39 @@
 package cliente.porto.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
 @Entity
-public class Movimentação {
+public class Movimentacao implements Serializable {
+    private static  final long serialVersionUID = 1l;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private Instant moment;
 
+    private Integer Move;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="client_id")
     private client client;
 
-    public Movimentação() {
+    public Movimentacao() {
 
     }
 
-    public Movimentação(Long id, Instant moment, cliente.porto.entities.client client) {
+    public Movimentacao(Long id, Instant moment, StatusMoviEnum Move, cliente.porto.entities.client client) {
         this.id = id;
         this.moment = moment;
+        setMove(Move);
         this.client = client;
     }
 
@@ -42,19 +53,29 @@ public class Movimentação {
         this.moment = moment;
     }
 
-    public cliente.porto.entities.client getClient() {
+    public StatusMoviEnum getMove() {
+        return StatusMoviEnum.valueOf(Move);
+    }
+
+    public void setMove(StatusMoviEnum move) {
+        if(move != null) {
+            this.Move = move.getCode();
+        }
+    }
+
+    public client getClient() {
         return client;
     }
 
-    public void setClient(cliente.porto.entities.client client) {
+    public void setClient(client client ) {
         this.client = client;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Movimentação)) return false;
-        Movimentação that = (Movimentação) o;
+        if (!(o instanceof Movimentacao)) return false;
+        Movimentacao that = (Movimentacao) o;
         return Objects.equals(id, that.id);
     }
 

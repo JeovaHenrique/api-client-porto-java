@@ -1,38 +1,41 @@
 package cliente.porto.entities;
 
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class client {
-
+public class client implements Serializable {
+    private static final long serialVersionUID = 1l;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String clients;
     private String numCont;
     private Integer tip;
-    private Categoria categoria;
-    private Status status;
+    private Integer categoria;
+    private Integer status;
+
 
     @OneToMany(mappedBy = "client")
-    private final List<Movimentação> Mover = new ArrayList<>();
+    private final List<Movimentacao> Mover = new ArrayList<>();
 
     public client() {
     }
 
-    public client(Long id, String clients, String numCont, Integer tip, Categoria categoria, Status status) {
+    public client(Long id, String clients, String numCont, Integer tip, CategoriaEnum categoria, StatusEnum status) {
         this.id = id;
         this.clients = clients;
         this.numCont = numCont;
         this.tip = tip;
-        this.categoria = categoria;
-        this.status = status;
+        setCategoria(categoria);
+        setStatus(status);
     }
 
-    public List<Movimentação> getMover() {
+    public List<Movimentacao> getMover() {
         return Mover;
     }
 
@@ -59,25 +62,23 @@ public class client {
     public void setTip(Integer tip) {
         if(tip == 20 || tip == 40) {
             this.tip = tip;
-        } else {
-            System.out.println(-1);
         }
     }
 
-    public Categoria getCategoria() {
-        return categoria;
+    public CategoriaEnum getCategoria() {
+        return CategoriaEnum.valueOf(categoria);
     }
 
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
+    public void setCategoria(CategoriaEnum categoria) {
+        this.categoria = categoria.getCode();
     }
 
-    public Status getStatus() {
-        return status;
+    public StatusEnum getStatus() {
+        return StatusEnum.valueOf(status);
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setStatus(StatusEnum status) {
+        this.status = status.getCode();
     }
 
     public String getNumCont() {
@@ -86,14 +87,13 @@ public class client {
 
     public void setNumCont(String numCont) {
         if(numCont.length() ==  12) {
-            if(!numCont.substring(0,4).matches("[a-zA-Z]*")) {
-                this.numCont = "";
-            }else if (!numCont.substring(4).matches("[0-9]*")) {
-                this.numCont  = "";
-            }else {
-                this.numCont = numCont;
+            if(numCont.substring(0,4).matches("[a-zA-Z]*")) {
+                if (numCont.substring(4).matches("[0-9]*")) {
+                    this.numCont = numCont;
+                }
             }
         }
+        throw new IllegalArgumentException("Invalid Number Container");
     }
 
     @Override
